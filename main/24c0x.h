@@ -1,5 +1,6 @@
 /*
 Driver for reading and writing data to 24Cxx external I2C EEPROMs.
+Modified version of something i found on github ;)
 */
 #include <stdio.h>
 #include <string.h>
