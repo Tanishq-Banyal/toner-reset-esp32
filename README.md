@@ -1,10 +1,16 @@
 # printer-chip-reset-esp32
 esp32 program to reprogram the toner chip over i2c
 
-**Known Issue :** cmake is not properly configured for CXX build, so build will fail after this commit.
+### How this Works ?
+The printer stores the page count inside the EEPROM chip of Toner/Cartridge.
+Using this Program you can read the contents of the chip, copy it to your PC, edit it in notepad and then flash back to the chip, all via esp32.
+
+### Known Issue :-
+ESP-IDF's API seems to be C only. After switching to C++, it's unable to build the project.
 
 ### How to Use ?
 1. Run: `git clone https://github.com/Tanishq-Banyal/printer-chip-reset-esp32.git`
-2. Open ESP-IDF shell, cd to the folder made by git, then run `idf.py build`
-3. Connect the board to PC, then flash using `idf.py flash monitor --port <PortNameHere>`
-4. Read from a new chip to a buffer, then write back to old chip using command-line interface.
+2. Edit the `EEPROM_SIZE` variable in `src/main.cpp` according to your toners flash chip.
+3. Open ESP-IDF shell, cd to the folder made by git, then run `idf.py build`
+4. Connect the board to PC, then flash using `idf.py flash monitor --port <PortNameHere>`
+5. You can now do everything using command-line interface.
