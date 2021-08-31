@@ -15,10 +15,10 @@ Modified version of something i found on github ;)
 #ifndef AT24C_H_
 #define AT24C_H_
 
-#define ACK_CHECK_EN    0x1     /*!< I2C master will check ack from slave*/
-#define ACK_CHECK_DIS   0x0     /*!< I2C master will not check ack from slave */
-#define ACK_VAL         0x0     /*!< I2C ack value */
-#define NACK_VAL        0x1     /*!< I2C nack value */
+//#define I2C_MASTER_ACK    0x1     /*!< I2C master will check ack from slave*/
+//#define ACK_CHECK_DIS   0x0     /*!< I2C master will not check ack from slave */
+//#define ACK_VAL         0x0     /*!< I2C ack value */
+//#define I2C_MASTER_NACK        0x1     /*!< I2C nack value */
 
 #define tag "a24c-drv"
 
@@ -38,14 +38,16 @@ esp_err_t i2c_master_driver_initialize(EEPROM_t* dev, int16_t byte_size, i2c_por
 	dev->_size = byte_size/128;
 
 	esp_err_t ret;
-	i2c_config_t conf = {
-        .mode = I2C_MODE_MASTER,
-        .sda_io_num = i2c_gpio_sda,
-        .sda_pullup_en = GPIO_PULLUP_ENABLE,
-        .scl_io_num = i2c_gpio_scl,
-        .scl_pullup_en = GPIO_PULLUP_ENABLE,
-        .master.clk_speed = i2c_freq
-	};
+
+	i2c_config_t conf;
+	conf.mode = I2C_MODE_MASTER;
+	conf.sda_io_num = i2c_gpio_sda;
+	conf.scl_io_num = i2c_gpio_scl;
+	conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
+	conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
+	conf.master.clk_speed = i2c_freq;
+	conf.clk_flags = 0;
+
 	ret = i2c_param_config(i2c_port, &conf);
 	ESP_LOGD(tag, "i2c_param_config=%d", ret);
 	if (ret != ESP_OK) return ret;
@@ -63,11 +65,11 @@ static esp_err_t ReadReg8(EEPROM_t * dev, i2c_port_t i2c_port, int chip_addr, ui
 {
 	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, chip_addr << 1 | I2C_MASTER_WRITE, ACK_CHECK_EN);
-	i2c_master_write_byte(cmd, data_addr, ACK_CHECK_EN);
+	i2c_master_write_byte(cmd, chip_addr << 1 | I2C_MASTER_WRITE, I2C_MASTER_ACK);
+	i2c_master_write_byte(cmd, data_addr, I2C_MASTER_ACK);
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, chip_addr << 1 | I2C_MASTER_READ, ACK_CHECK_EN);
-	i2c_master_read_byte(cmd, data, NACK_VAL);
+	i2c_master_write_byte(cmd, chip_addr << 1 | I2C_MASTER_READ, I2C_MASTER_ACK);
+	i2c_master_read_byte(cmd, data, I2C_MASTER_NACK);
 	i2c_master_stop(cmd);
 	esp_err_t ret = i2c_master_cmd_begin(i2c_port, cmd, 1000 / portTICK_RATE_MS);
 	i2c_cmd_link_delete(cmd);
@@ -78,9 +80,9 @@ static esp_err_t WriteReg8(EEPROM_t * dev, i2c_port_t i2c_port, int chip_addr, u
 {
 	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, chip_addr << 1 | I2C_MASTER_WRITE, ACK_CHECK_EN);
-	i2c_master_write_byte(cmd, data_addr, ACK_CHECK_EN);
-	i2c_master_write_byte(cmd, data, ACK_CHECK_EN);
+	i2c_master_write_byte(cmd, chip_addr << 1 | I2C_MASTER_WRITE, I2C_MASTER_ACK);
+	i2c_master_write_byte(cmd, data_addr, I2C_MASTER_ACK);
+	i2c_master_write_byte(cmd, data, I2C_MASTER_ACK);
 	i2c_master_stop(cmd);
 	esp_err_t ret = i2c_master_cmd_begin(i2c_port, cmd, 1000 / portTICK_RATE_MS);
 	i2c_cmd_link_delete(cmd);
@@ -94,12 +96,12 @@ static esp_err_t ReadReg16(EEPROM_t * dev, i2c_port_t i2c_port, int chip_addr, u
 	uint8_t low_addr = data_addr & 0xff;
 	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, chip_addr << 1 | I2C_MASTER_WRITE, ACK_CHECK_EN);
-	i2c_master_write_byte(cmd, high_addr, ACK_CHECK_EN);
-	i2c_master_write_byte(cmd, low_addr, ACK_CHECK_EN);
+	i2c_master_write_byte(cmd, chip_addr << 1 | I2C_MASTER_WRITE, I2C_MASTER_ACK);
+	i2c_master_write_byte(cmd, high_addr, I2C_MASTER_ACK);
+	i2c_master_write_byte(cmd, low_addr, I2C_MASTER_ACK);
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, chip_addr << 1 | I2C_MASTER_READ, ACK_CHECK_EN);
-	i2c_master_read_byte(cmd, data, NACK_VAL);
+	i2c_master_write_byte(cmd, chip_addr << 1 | I2C_MASTER_READ, I2C_MASTER_ACK);
+	i2c_master_read_byte(cmd, data, I2C_MASTER_NACK);
 	i2c_master_stop(cmd);
 	esp_err_t ret = i2c_master_cmd_begin(i2c_port, cmd, 1000 / portTICK_RATE_MS);
 	i2c_cmd_link_delete(cmd);
@@ -112,10 +114,10 @@ static esp_err_t WriteReg16(EEPROM_t * dev, i2c_port_t i2c_port, int chip_addr, 
 	uint8_t low_addr = data_addr & 0xff;
 	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, chip_addr << 1 | I2C_MASTER_WRITE, ACK_CHECK_EN);
-	i2c_master_write_byte(cmd, high_addr, ACK_CHECK_EN);
-	i2c_master_write_byte(cmd, low_addr, ACK_CHECK_EN);
-	i2c_master_write_byte(cmd, data, ACK_CHECK_EN);
+	i2c_master_write_byte(cmd, chip_addr << 1 | I2C_MASTER_WRITE, I2C_MASTER_ACK);
+	i2c_master_write_byte(cmd, high_addr, I2C_MASTER_ACK);
+	i2c_master_write_byte(cmd, low_addr, I2C_MASTER_ACK);
+	i2c_master_write_byte(cmd, data, I2C_MASTER_ACK);
 	i2c_master_stop(cmd);
 	esp_err_t ret = i2c_master_cmd_begin(i2c_port, cmd, 1000 / portTICK_RATE_MS);
 	i2c_cmd_link_delete(cmd);

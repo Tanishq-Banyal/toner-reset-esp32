@@ -18,6 +18,8 @@ extern "C"
 	#include "esp_log.h"
 
 	#include "24c0x.h"
+
+	void app_main();
 }
 
 #define	EEPROM_SIZE			512		//512 bytes
