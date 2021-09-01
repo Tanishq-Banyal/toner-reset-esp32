@@ -1,3 +1,7 @@
+// Licence : MIT
+// Year    : 2021
+// Author  : Tanishq Banyal
+
 #include <vector>
 #include <string>
 #include <sstream>
@@ -58,10 +62,32 @@ vector<string> split_string(string &str, const char delim)
 	return tokens;
 }
 
+uint8_t base_select_menu()
+{
+	uint8_t base;
+
+	cout << "\nSelect Format :-\n"
+		 << "10 --> INT ARRAY\n"
+		 << "16 --> HEX ARRAY\n\n";
+	
+	cout << "Enter Choice : "; cin >> base;
+
+	if (base != 10 && base != 16)
+	{
+		puts("Invalid Input, Please Try Again !");
+		return base_select_menu();
+	}
+	else
+	{
+		return base;
+	}
+}
+
 void scan_data(uint8_t dt[], uint16_t len)
 {
 	char delim;
 	string str;
+	uint8_t format = base_select_menu();
 	cout << "Enter Deliminator : "; cin >> delim;
 	cout << "Enter Data : "; getline(cin, str);
 	
@@ -72,7 +98,7 @@ void scan_data(uint8_t dt[], uint16_t len)
 	{
 		try
 		{
-			bytes.push_back(stoul(tok));
+			bytes.push_back(stoul(tok, 0, format));
 		}
 		catch (exception &e)
 		{
@@ -89,22 +115,30 @@ void scan_data(uint8_t dt[], uint16_t len)
 
 void print_data(uint8_t dt[], uint16_t len)
 {
-	//uint16_t clm = 0;
-	for (uint16_t i=0 ; i < len ; i++)
-	{
-		printf("%02x ", dt[i]); fflush(stdout);
-		/*
-		if (clm == 0) printf("0x%03x: ", addr);
+	uint8_t base = base_select_menu();
 
-		printf("0x%02x ", dt[addr]);
-		clm++;
-		if (clm == 16)
+	switch (base)
+	{
+	case 10 :
+		for (uint16_t i=0 ; i < len ; i++)
 		{
-			clm = 0;
-			printf("\n");
+			printf("%03u ", dt[i]);
 		}
-		*/
+		break;
+	
+	case 16 :
+		for (uint16_t i=0 ; i < len ; i++)
+		{
+			printf("%02x ", dt[i]);
+		}
+		break;
+	
+	default :
+		puts("Unexpected Error Occured !!");
+		return;
 	}
+	
+	fflush(stdout);
 }
 
 void loadROM(uint8_t buf[], uint16_t len)
