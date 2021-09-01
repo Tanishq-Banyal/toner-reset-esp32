@@ -201,9 +201,9 @@ uint8_t* buffer_select_menu(uint8_t bn)
 
 	printf("Select Buffer %u :-", bn);
 	puts("");
-	puts("BUFFER 1");
-	puts("BUFFER 2");
-	puts("BUFFER 3");
+	puts("1 --> BUFFER 1");
+	puts("2 --> BUFFER 2");
+	puts("3 --> BUFFER 3");
 	puts("");
 	puts("Enter Selection : "); scanf("%u", &selection);
 
