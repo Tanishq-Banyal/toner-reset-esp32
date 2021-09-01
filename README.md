@@ -5,9 +5,6 @@ esp32 program to reprogram the toner chip over i2c
 The printer stores the page count inside the EEPROM chip of Toner/Cartridge.
 Using this Program you can read the contents of the chip, copy it to your PC, edit it in notepad and then flash back to the chip, all via esp32.
 
-### Known Issue :-
-ESP-IDF's API seems to be C only. After switching to C++, it's unable to build the project.
-
 ### How to Use ?
 1. Run: `git clone https://github.com/Tanishq-Banyal/printer-chip-reset-esp32.git`
 2. Edit the `EEPROM_SIZE` variable in `src/main.cpp` according to your toners flash chip.
