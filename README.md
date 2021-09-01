@@ -7,7 +7,7 @@ Using this Program you can read the contents of the chip, copy it to your PC, ed
 
 ### How to Use ?
 1. Run: `git clone https://github.com/Tanishq-Banyal/printer-chip-reset-esp32.git`
-2. Edit the `EEPROM_SIZE` variable in `src/main.cpp` according to your toners flash chip.
+2. Edit the `EEPROM_SIZE` variable in `main/main.cpp` according to your toners flash chip.
 3. Open ESP-IDF shell, cd to the folder made by git, then run `idf.py build`
 4. Connect the board to PC, then flash using `idf.py flash monitor --port <PortNameHere>`
 5. You can now do everything using command-line interface.
