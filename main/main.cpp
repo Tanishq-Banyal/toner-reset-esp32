@@ -40,7 +40,7 @@ uint8_t buf1[EEPROM_SIZE] = {};
 uint8_t buf2[EEPROM_SIZE] = {};
 uint8_t buf3[EEPROM_SIZE] = {};
 
-vector<string> split_string(string &str, const char delim)
+vector<string> split_string(string& str, const char delim)
 {
 	string tok;
 	vector<string> tokens;
@@ -169,7 +169,7 @@ void dumpROM(uint8_t buf[], uint16_t len)
 
 void clearROM(uint8_t buf[], uint16_t start, uint16_t end)
 {
-	for (int i=start ; i < end ; i++)
+	for (int i=start ; i <= end ; i++)
 	{
 		buf[i] = 0;
 	}
@@ -269,7 +269,7 @@ void main_menu()
 	
 	case 6:
 		//Fill BUFFER with 0s
-		clearROM(buffer_select_menu(1), 0, EEPROM_SIZE);
+		clearROM(buffer_select_menu(1), 1, EEPROM_SIZE);
 		break;
 	
 	case 0:
